@@ -9,16 +9,72 @@ $(function() {
     -------------------------------------------------------------- */
 
     // -- Fonction ajouterContact(Contact) : Ajouter un Contact dans le tableau de Contacts, mettre à jour le tableau HTML, réinitialiser le formulaire et afficher une notification.
-    function ajouterContact(UnContact) {}
+    function ajouterContact(UnContact) {
+
+        // -- Ajouter "UnContact" dans "CollectionDeContact"
+        CollectionDeContacts.push(UnContact);
+
+        // -- On observe l'ajoût des contacts dans la collection
+        console.log(CollectionDeContacts);
+
+        // -- On cache la phrase "aucun contact"
+        $('.aucuncontact').hide();
+
+        // -- Mise à jour du HTML
+        $(`
+            <tr>
+                <td>${UnContact.nom}</td>
+                <td>${UnContact.prenom}</td>
+                <td>${UnContact.email}</td>
+                <td>${UnContact.tel}</td>
+            </tr>
+            `).appendTo($('#LesContacts > tbody'))
+
+    reinitialisationDuFormulaire();
+
+    afficheUneNotification();
+
+}
 
     // -- Fonction RéinitialisationDuFormulaire() : Après l'ajout d'un contact, on remet le formulaire à 0 !
-    function reinitialisationDuFormulaire() {}
+    function reinitialisationDuFormulaire() {
+
+        // -- En jQuery
+        $('#contact').get(0).reset();
+
+        // -- En JS
+        document.getElementById('contact').reset();
+
+        // -- Autre méthode
+        $('#contact .form-control').val('');
+    }
 
     // -- Affichage d'une Notification
-    function afficheUneNotification() {}
+    function afficheUneNotification() {
+        $('.alert-contact').fadeIn().delay(4000).fadeOut();
+    }
 
     // -- Vérification de la présence d'un Contact dans Contacts
-    function estCeQunContactEstPresent(UnEmail) {}
+    function estCeQunContactEstPresent(UnEmail) {
+
+        // -- Booleen qui indique la présence d'un contact dans ma collection
+        let estPresent = false;
+
+        // -- On parcourt le tableau à la recherche d'une correspondance
+        for(let i = 0 ; i < CollectionDeContacts.length ; i++){
+            if (UnEmail === CollectionDeContacts[i].email){
+                // -- Si une correspondance est trouvée "estPresen" passe à TRUE
+                estPresent = true;
+                // -- On arrête la boucle. Plus besoin de poursuivre
+                break;
+            } // -- endfor
+
+            // -- On retourne le bouleen
+            return estPresent;
+
+        } // -- Fin de la boucle
+
+    }
 
     // -- Vérification de la validité d'un Email
     // : https://paulund.co.uk/regular-expression-to-validate-email-address
@@ -45,49 +101,87 @@ $(function() {
 
         // -- Récupération des champs à vérifier
         var prenom, nom, email, tel;
-        nom = $('#nom');
-        prenom = $('#prenom');
-        email = $('#email');
-        tel = $('#tel');
+        nom     = $('#nom'); 
+        prenom  = $('#prenom');
+        email   = $('#email');
+        tel     = $('#tel');
+
         // -- Vérification des informations...
         let mesInformationsSontValides = true;
-
+        
         // -- Vérification du Prénom
-        if(prenom.val().length == 0){
-            // -- Le champ est incorrect, car il n'a pas été rempli..
+        if(prenom.val().length == 0) {
+            // -- Le champ est incorrect, car il n'a pas été remplit...
             mesInformationsSontValides = false;
         }
+
         // -- Vérification du Nom
-        if(nom.val().length == 0){
-            // -- Le champ est incorrect, car il n'a pas été rempli..
+        if(nom.val().length == 0) {
+            // -- Le champ est incorrect, car il n'a pas été remplit...
             mesInformationsSontValides = false;
         }
+
         // -- Vérification du Tel
-        if(tel.val().length == 0){
-            // -- Le champ est incorrect, car il n'a pas été rempli..
+        if(tel.val().length == 0) {
+            // -- Le champ est incorrect, car il n'a pas été remplit...
             mesInformationsSontValides = false;
         }
+
         // -- Vérification du Mail
-        if(!validateEmail(email.val())){
-            // -- Le champ est incorrect, car il n'a pas été rempli..
+        if(!validateEmail(email.val())) {
             mesInformationsSontValides = false;
         }
-        // -- Si mesInformationsSontValides
-        if(mesInformationsSontValides){
-          
-            // - Tout est correct, préparation du contact
-            let Contact = {
-                //cle   //valeur
-                nom     :nom.val(),
-                prenom  :prenom.val(),
-                email   :email.val(),
-                tel     :tel.val()
+
+        // -- Dans le cas d'une boucle de vérification...
+        let ChampsAVerifier = $('#contact input:not(input[type=submit])');
+        // console.log(ChampsAVerifier);
+        
+        for(let i = 0 ; i < ChampsAVerifier.length ; i++) {
+
+            /* Version 1 *//*
+            let champ = ChampsAVerifier[i];
+            // console.log($(champ));
+            if($(champ).val().length == 0) {
+                mesInformationsSontValides = false;
             }
+            */
+            if($(ChampsAVerifier).eq(i).val().length == 0) {
+                mesInformationsSontValides = false;
+            }
+
+
         }
-        // -- Sinon...
+
+        // -- Si mesInformationsSontValides
+        if(mesInformationsSontValides) {
+
+            // -- Tous est correct, Préparation du Contact
+            let Contact = {
+                //cle       //valeur
+                nom         : nom.val(),
+                prenom      : prenom.val(),
+                email       : email.val(),
+                tel         : tel.val()
+            };
+
+            // -- Aperçu dans la console
+            console.log(Contact);
+
+            // -- Vérifier si le contact est présent
+            if(estCeQunContactEstPresent(Contact.email)){
+                alert('ATTENTION\nCe contact est déjà présent.');
+            }
+            else{
+                ajouterContact(Contact);
+            }
+
+        }
         else {
-            alert("ATTENTION !!!!!\nRempli toutes les cases connard !")
+            // -- Alert
+            alert('ATTENTION\nVeuillez bien remplir tous les champs.');
         }
+
+        // -- Sinon...
 
     });
 

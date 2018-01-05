@@ -1,0 +1,33 @@
+.nav-link{
+    color : #fff;
+}
+
+.nav-link:hover{
+    color : grey;
+}
+
+.dark-grey{
+    background-color: #141414;
+}
+
+.black{
+    background-color: #000;
+}
+
+.white{
+    background-color: #fff;
+    height: 360px;
+}
+
+.contact{
+    background-color: #000;
+}
+
+input{
+    margin : 5px;
+}
+
+
+input textarea{
+    height: 100px;
+}
